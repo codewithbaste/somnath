@@ -625,3 +625,67 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+
+
+
+
+
+/* Certifications Section */
+.certifications {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.certifications-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.certification-item {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    width: 100%;
+    max-width: 350px;
+}
+
+.certification-item:hover {
+    transform: translateY(-10px);
+}
+
+.certification-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.certification-details {
+    padding: 20px;
+}
+
+.certification-details h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.certification-details p {
+    color: #666;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .certifications-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .certification-item {
+        max-width: 100%;
+    }
+}
