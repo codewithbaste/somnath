@@ -689,3 +689,14 @@ footer {
         max-width: 100%;
     }
 }
+
+
+
+
+
+.hidden-experience {
+    display: none;
+}
+.hidden-experience.show {
+    display: block;
+}
