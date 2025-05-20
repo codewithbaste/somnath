@@ -1,18 +1,51 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Somnath Baste | BIM Professional</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Somnath Baste - BIM Modeler & Coordinator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Smooth scrolling for anchor links */
-        html {
-            scroll-behavior: smooth;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -24,13 +57,18 @@
                     <li><a href="#about">About</a></li>
                     <li><a href="#experience">Experience</a></li>
                     <li><a href="#skills">Skills</a></li>
+                    <li><a href="#projects">Projects</a></li>
                     <li><a href="#certifications">Certifications</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
-                <div class="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </div>
             </nav>
+            <div class="header-right">
+                <button class="dark-mode-btn" id="darkModeToggle">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+            </div>
         </div>
     </header>
 
@@ -41,8 +79,8 @@
                 <h2>BIM Modeler - Mechanical | BIM Coordinator</h2>
                 <p>Creating efficient and sustainable building designs with advanced BIM technologies</p>
                 <div class="hero-btns">
-                    <a href="#contact" class="btn-primary">Contact Me</a>
-                    <a href="#about" class="btn-secondary">Learn More</a>
+                    <a href="#contact" class="btn btn-primary">Contact Me</a>
+                    <a href="#about" class="btn btn-secondary">Learn More</a>
                 </div>
             </div>
             <div class="hero-image">
@@ -56,11 +94,11 @@
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <p>I Am a Dedicated BIM MEP Designer with over 8 years of experience in designing and coordinating mechanical, electrical, and plumbing systems for diverse construction projects.</p>
+                    <p>I am a dedicated BIM MEP Designer with over 8 years of experience in designing and coordinating mechanical, electrical, and plumbing systems for diverse construction projects.</p>
                     <p>My strong background includes expertise in utilizing advanced BIM software tools, such as Autodesk Revit, Dynamo, and Navisworks, to create efficient and sustainable building designs. Additionally, I have proficiency in BIM 360 and AutoCAD 2D & 3D, which enhances my ability to collaborate effectively as a BIM Coordinator, ensuring seamless integration and coordination across all project phases.</p>
                     <div class="about-details">
                         <div class="detail-item">
-                            <i class="fas fa-user-tie"></i>
+                            <i class="fas fa-user"></i>
                             <div>
                                 <h4>Name</h4>
                                 <p>Somnath Baste</p>
@@ -89,6 +127,7 @@
                         </div>
                     </div>
                 </div>
+            
             </div>
         </div>
     </section>
@@ -133,36 +172,27 @@
                         <p>Project Work: Ram Mandir Ayodhya, Global Skill Park Bhopal, MSME Patna, New Parliament Building</p>
                     </div>
                 </div>
-                <div class="timeline-item">
+                <div class="timeline-item hidden-experience">
                     <div class="timeline-date">Dec 2021 - Mar 2022</div>
                     <div class="timeline-content">
                         <h3>Design & Estimation Engineer - Fire Systems</h3>
                         <h4>AGS Technologies (India) Pvt Ltd.</h4>
                         <p>Pune, Maharashtra, India</p>
-                        <ul>
-                            <li>Developed detailed designs for fire protection systems, including fire alarms, sprinklers, and suppression systems.</li>
-                            <li>Utilized AutoCAD or other design software to create accurate and compliant drawings.</li>
-                            <li>Ensured all system designs adhered to regulatory requirements.</li>
-                            <li>Collaborated with project teams to integrate fire protection systems seamlessly into building designs.</li>
-                            <li>Prepared cost estimates for proposed fire protection system designs.</li>
-                        </ul>
+                        <p>Developed detailed designs for fire protection systems, including fire alarms, sprinklers, and suppression systems. Utilized AutoCAD or other design software to create accurate and compliant drawings. Ensured all system designs adhered to regulatory requirements. Collaborated with project teams to integrate fire protection systems seamlessly into building designs. Prepared cost estimates for proposed fire protection system designs.</p>
                     </div>
                 </div>
-                <div class="timeline-item">
+                <div class="timeline-item hidden-experience">
                     <div class="timeline-date">Jun 2017 - Mar 2021</div>
                     <div class="timeline-content">
                         <h3>Design & Estimation Engineer - Fire Systems</h3>
                         <h4>Ajinkya Fire Protection Services</h4>
                         <p>Nashik, Maharashtra, India</p>
-                        <ul>
-                            <li>Designed diverse fire protection systems, including fire sprinkler systems, fire alarm systems, fire suppression systems, and smoke control systems.</li>
-                            <li>Ensured strict adherence to relevant codes, regulations, and industry standards.</li>
-                            <li>Prepared comprehensive cost estimates for fire protection projects.</li>
-                            <li>Produced intricate technical drawings, plans, and diagrams for fire protection systems.</li>
-                            <li>Coordinated with architects, engineers, contractors, and regulatory authorities.</li>
-                        </ul>
+                        <p>Designed diverse fire protection systems, including fire sprinkler systems, fire alarm systems, fire suppression systems, and smoke control systems. Ensured strict adherence to relevant codes, regulations, and industry standards. Prepared comprehensive cost estimates for fire protection projects. Produced intricate technical drawings, plans, and diagrams for fire protection systems. Coordinated with architects, engineers, contractors, and regulatory authorities.</p>
                     </div>
                 </div>
+            </div>
+            <div class="view-more">
+                <button id="viewMoreBtn" class="btn btn-primary">View Full Experience</button>
             </div>
         </div>
     </section>
@@ -176,27 +206,19 @@
                     <div class="skill-items">
                         <div class="skill-item">
                             <div class="skill-name">Autodesk Revit</div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 95%;"></div>
-                            </div>
+                            <div class="skill-bar"><div class="skill-level" style="width: 90%;"></div></div>
                         </div>
                         <div class="skill-item">
                             <div class="skill-name">Dynamo</div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 85%;"></div>
-                            </div>
+                            <div class="skill-bar"><div class="skill-level" style="width: 85%;"></div></div>
                         </div>
                         <div class="skill-item">
                             <div class="skill-name">Navisworks</div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 90%;"></div>
-                            </div>
+                            <div class="skill-bar"><div class="skill-level" style="width: 80%;"></div></div>
                         </div>
                         <div class="skill-item">
                             <div class="skill-name">BIM 360</div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 88%;"></div>
-                            </div>
+                            <div class="skill-bar"><div class="skill-level" style="width: 75%;"></div></div>
                         </div>
                     </div>
                 </div>
@@ -205,21 +227,15 @@
                     <div class="skill-items">
                         <div class="skill-item">
                             <div class="skill-name">AutoCAD 2D & 3D</div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 92%;"></div>
-                            </div>
+                            <div class="skill-bar"><div class="skill-level" style="width: 90%;"></div></div>
                         </div>
                         <div class="skill-item">
                             <div class="skill-name">Python</div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 75%;"></div>
-                            </div>
+                            <div class="skill-bar"><div class="skill-level" style="width: 70%;"></div></div>
                         </div>
                         <div class="skill-item">
                             <div class="skill-name">Revit Add-ins</div>
-                            <div class="skill-bar">
-                                <div class="skill-level" style="width: 85%;"></div>
-                            </div>
+                            <div class="skill-bar"><div class="skill-level" style="width: 80%;"></div></div>
                         </div>
                     </div>
                 </div>
@@ -229,7 +245,7 @@
                         <span class="skill-tag">Fire Protection Systems</span>
                         <span class="skill-tag">Plumbing Systems</span>
                         <span class="skill-tag">BIM Coordination</span>
-                        <span class="skill-tag">MEP Design</span>
+                        <span class="skill-tag">HVAC Design</span>
                         <span class="skill-tag">AI Applications</span>
                         <span class="skill-tag">Project Management</span>
                     </div>
@@ -237,8 +253,6 @@
             </div>
         </div>
     </section>
-
-<!-- Previous sections (header, hero, about, experience, skills) remain the same -->
 
     <section id="projects" class="projects">
         <div class="container">
@@ -396,137 +410,138 @@
         </div>
     </section>
 
+
     <!-- Rest of the sections (certifications, contact, footer) remain the same -->
 
     <style>
-        /* Projects Section Styles */
-        .projects {
-            padding: 80px 0;
-            background-color: #f9f9f9;
-        }
-        
-        .projects-filter {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            padding: 8px 20px;
-            margin: 0 10px 10px;
-            background: #e0e0e0;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        
-        .filter-btn.active {
-            background: #0078d7;
-            color: white;
-        }
-        
+    /* Projects Section Styles */
+    .projects {
+        padding: 80px 0;
+        background-color: var(--bg-color);
+        transition: background-color 0.3s ease;
+    }
+    
+    .projects-filter {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .filter-btn {
+        padding: 8px 20px;
+        background: var(--light-gray);
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        color: var(--text-color);
+    }
+    
+    .filter-btn.active {
+        background: var(--secondary-color);
+        color: var(--white);
+    }
+    
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 25px;
+    }
+    
+    .project-item {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        aspect-ratio: 4/3; /* Better aspect ratio for project thumbnails */
+        transition: transform 0.3s ease;
+    }
+    
+    .project-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .project-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+    
+    .project-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+        color: white;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .project-item:hover .project-overlay {
+        opacity: 1;
+    }
+    
+    .project-overlay h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+    
+    .project-overlay p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
         .projects-grid {
-            display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
         }
-        
-        .project-item {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            aspect-ratio: 1/1;
-        }
-        
-        .project-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+        .projects-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
         }
         
         .project-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
             padding: 15px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .project-item:hover .project-overlay {
-            transform: translateY(0);
-        }
-        
-        .project-item:hover img {
-            transform: scale(1.05);
         }
         
         .project-overlay h3 {
-            margin: 0 0 5px;
             font-size: 16px;
         }
         
         .project-overlay p {
-            margin: 0;
             font-size: 12px;
-            opacity: 0.8;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .projects-grid {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
         }
         
-        @media (max-width: 768px) {
-            .projects-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 15px;
-            }
+        .filter-btn {
+            padding: 6px 15px;
+            font-size: 14px;
         }
-        
-        @media (max-width: 480px) {
-            .projects-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 10px;
-            }
-            
-            .filter-btn {
-                padding: 6px 15px;
-                font-size: 14px;
-                margin: 0 5px 5px;
-            }
-        }
-    </style>
+    }
+</style>
 
-    <script>
-        // Project Filter Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            const projectItems = document.querySelectorAll('.project-item');
-            
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Remove active class from all buttons
-                    filterBtns.forEach(btn => btn.classList.remove('active'));
-                    // Add active class to clicked button
-                    this.classList.add('active');
-                    
-                    const filterValue = this.getAttribute('data-filter');
-                    
-                    projectItems.forEach(item => {
-                        if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
-                            item.style.display = 'block';
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                });
-            });
-        });
-    </script>
+
+
 
 
 
@@ -544,7 +559,7 @@
                     </div>
                     <div class="certification-details">
                         <h3>BIM Execution Plan Certification</h3>
-                        <p>ABIM Execution Plan, focusing on structured planning and collaboration in BIM projects Certification </p>
+                        <p>ABIM Execution Plan, focusing on structured planning and collaboration in BIM projects Certification</p>
                     </div>
                 </div>
                 <div class="certification-item">
@@ -553,16 +568,16 @@
                     </div>
                     <div class="certification-details">
                         <h3>Dynamo for Revit Certification</h3>
-                        <p>Dynamo 2.x Essential Training, covering visual programming for BIM automation Certification </p>
+                        <p>Dynamo 2.x Essential Training, covering visual programming for BIM automation Certification</p>
                     </div>
                 </div>
                 <div class="certification-item">
                     <div class="certification-image">
-                        <img src="alcertificate.png" alt="AutoCAD Certification">
+                        <img src="alcertificate.png" alt="AI Certification">
                     </div>
                     <div class="certification-details">
-                        <h3>Artificial Intelligence </h3>
-                        <p>Introduction to Artificial Intelligence with focus on AI applications in business Certification </p>
+                        <h3>Artificial Intelligence</h3>
+                        <p>Introduction to Artificial Intelligence with focus on AI applications in business Certification</p>
                     </div>
                 </div>
             </div>
@@ -604,7 +619,7 @@
                     </div>
                 </div>
                 <div class="contact-form">
-                    <form id="contactForm">
+                    <div id="contactForm">
                         <div class="form-group">
                             <input type="text" id="name" placeholder="Your Name" required>
                         </div>
@@ -612,13 +627,13 @@
                             <input type="email" id="email" placeholder="Your Email" required>
                         </div>
                         <div class="form-group">
-                            <input type="text" id="subject" placeholder="Subject">
+                            <input type="text" id="subject" placeholder="Subject" required>
                         </div>
                         <div class="form-group">
-                            <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+                            <textarea id="message" placeholder="Your Message" required></textarea>
                         </div>
-                        <button type="submit" class="btn-primary">Send Message</button>
-                    </form>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -638,6 +653,7 @@
                         <li><a href="#about">About</a></li>
                         <li><a href="#experience">Experience</a></li>
                         <li><a href="#skills">Skills</a></li>
+                        <li><a href="#projects">Projects</a></li>
                         <li><a href="#certifications">Certifications</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
@@ -646,29 +662,17 @@
                     <h3>Connect With Me</h3>
                     <div class="social-icons">
                         <a href="https://www.linkedin.com/in/somnathbaste"><i class="fab fa-linkedin"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
                         <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Somnath Baste. All rights reserved.</p>
+                <p>© 2025 Developed by Somnath Baste. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        // Toggle Mobile Menu
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            document.querySelector('nav ul').classList.toggle('active');
-        });
-
-        // Close mobile menu when clicking a nav link
-        document.querySelectorAll('nav ul li a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.querySelector('nav ul').classList.remove('active');
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
