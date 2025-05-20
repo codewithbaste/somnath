@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Smooth scrolling for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -32,7 +38,7 @@
         <div class="container">
             <div class="hero-content">
                 <h1>Somnath Baste</h1>
-                <h2>BIM Designer - Mechanical | BIM Coordinator</h2>
+                <h2>BIM Modeler - Mechanical | BIM Coordinator</h2>
                 <p>Creating efficient and sustainable building designs with advanced BIM technologies</p>
                 <div class="hero-btns">
                     <a href="#contact" class="btn-primary">Contact Me</a>
@@ -127,9 +133,36 @@
                         <p>Project Work: Ram Mandir Ayodhya, Global Skill Park Bhopal, MSME Patna, New Parliament Building</p>
                     </div>
                 </div>
-            </div>
-            <div class="view-more">
-                <button id="viewMoreBtn" class="btn-secondary">View Full Experience</button> 
+                <div class="timeline-item">
+                    <div class="timeline-date">Dec 2021 - Mar 2022</div>
+                    <div class="timeline-content">
+                        <h3>Design & Estimation Engineer - Fire Systems</h3>
+                        <h4>AGS Technologies (India) Pvt Ltd.</h4>
+                        <p>Pune, Maharashtra, India</p>
+                        <ul>
+                            <li>Developed detailed designs for fire protection systems, including fire alarms, sprinklers, and suppression systems.</li>
+                            <li>Utilized AutoCAD or other design software to create accurate and compliant drawings.</li>
+                            <li>Ensured all system designs adhered to regulatory requirements.</li>
+                            <li>Collaborated with project teams to integrate fire protection systems seamlessly into building designs.</li>
+                            <li>Prepared cost estimates for proposed fire protection system designs.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Jun 2017 - Mar 2021</div>
+                    <div class="timeline-content">
+                        <h3>Design & Estimation Engineer - Fire Systems</h3>
+                        <h4>Ajinkya Fire Protection Services</h4>
+                        <p>Nashik, Maharashtra, India</p>
+                        <ul>
+                            <li>Designed diverse fire protection systems, including fire sprinkler systems, fire alarm systems, fire suppression systems, and smoke control systems.</li>
+                            <li>Ensured strict adherence to relevant codes, regulations, and industry standards.</li>
+                            <li>Prepared comprehensive cost estimates for fire protection projects.</li>
+                            <li>Produced intricate technical drawings, plans, and diagrams for fire protection systems.</li>
+                            <li>Coordinated with architects, engineers, contractors, and regulatory authorities.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -328,6 +361,18 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // Toggle Mobile Menu
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('nav ul').classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking a nav link
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('nav ul').classList.remove('active');
+            });
+        });
+    </script>
 </body>
 </html>
